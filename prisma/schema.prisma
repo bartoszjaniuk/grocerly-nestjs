@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String  @id @default(cuid()) @map("_id")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email String @unique
+  password String
+  avatar String?
+  groceryLists UserGroceryList[]
+  refreshToken String
+}
+
+model GroceryList {
+  id String @id @default(cuid()) @map("_id")
+  name String
+  users UserGroceryList[]
+}
+
+model GroceryCategory {
+  id String @id @default(cuid()) @map("_id")
+  name String
+  groceryListItems GroceryListItem[]
+}
+
+model GroceryListItem {
+  id String @id @default(cuid()) @map("_id")
+  name String
+
+  category GroceryCategory @relation(fields: [categoryId], references: [id])
+  categoryId String
+}
+
+model UserGroceryList {
+  id String @id @default(cuid()) @map("_id")
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  groceryListId String
+  groceryList GroceryList @relation(fields: [groceryListId], references: [id])
+
+  @@unique([userId, groceryListId])
+}
+
+
+
+
+

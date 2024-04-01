@@ -1,9 +1,11 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get } from '@nestjs/common';
 import { Response } from 'express';
 
 import { AuthService } from './auth.service';
 import { SignUpUserDto } from './dto/SignUpUserDto';
 import { SignInUserDto } from './dto/signInUserDto';
+import { GetUser } from './decorator/getUser.decorator';
+import { UserFromJwtDto } from './dto/userFromJwtDto';
 
 @Controller('auth')
 export class AuthController {
@@ -19,9 +21,9 @@ export class AuthController {
     res.status(200).send(loggedInUser);
   }
 
-  //   @Get('logout')
-  //   signOut(@GetUserId() userId: string, @Res() res: Response) {
-  //     this.authService.signOut(userId);
-  //     res.status(200).send('Success');
-  //   }
+  @Get('logout')
+  async signOut(@GetUser() user: UserFromJwtDto, @Res() res: Response) {
+    await this.authService.signOut(user.userId);
+    res.status(200).send('Success');
+  }
 }

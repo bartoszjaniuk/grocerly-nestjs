@@ -1,18 +1,27 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { GroceryService } from './grocery.service';
+import { GetUser } from 'src/auth/decorator/getUser.decorator';
+import { UserFromJwtDto } from 'src/auth/dto/userFromJwtDto';
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
 
+@UseGuards(JwtGuard)
 @Controller('grocery')
 export class GroceryController {
   constructor(private groceryService: GroceryService) {}
 
-  // @Get('list')
-  // async getThreads() {
-  //   return await this.groceryService.getUserThreads(+id);
-  // }
-}
+  @Post()
+  async createNewGroceryList(
+    @GetUser() user: UserFromJwtDto,
+    @Body() payload: { listName: string },
+  ) {
+    return await this.groceryService.createGroceryList({
+      name: payload.listName,
+      userId: user.userId,
+    });
+  }
 
-// As i user i open the app
-// then app should display login screen
-// user should be able to sign in with google, or apple
-// i choose sign in with google, accept.
-// then i should see dashboard
+  @Get()
+  async getGroceryLists(@GetUser() user: UserFromJwtDto) {
+    return await this.groceryService.getList(user.userId);
+  }
+}

@@ -19,4 +19,19 @@ export class UserService {
       },
     });
   }
+
+  async getUserById(id: string) {
+    const user = await this.db.user.findUnique({
+      where: { id },
+      include: {
+        groceryLists: true,
+      },
+    });
+    return {
+      id: user.id,
+      email: user.email,
+      avatar: user.avatar,
+      groceryLists: user.groceryLists,
+    };
+  }
 }

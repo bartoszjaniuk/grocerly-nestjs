@@ -27,6 +27,7 @@ model User {
 model GroceryList {
   id String @id @default(cuid()) @map("_id")
   name String
+  articles GroceryListItem[]
   users UserGroceryList[]
 }
 
@@ -39,6 +40,9 @@ model GroceryCategory {
 model GroceryListItem {
   id String @id @default(cuid()) @map("_id")
   name String
+
+  groceryList GroceryList @relation(fields: [groceryListId], references: [id])
+  groceryListId String
 
   category GroceryCategory @relation(fields: [categoryId], references: [id])
   categoryId String
@@ -55,6 +59,12 @@ model UserGroceryList {
 
   @@unique([userId, groceryListId])
 }
+
+
+// TODO:
+// model Notification {
+//   id String @id @default(cuid()) @map("_id")
+// }
 
 
 

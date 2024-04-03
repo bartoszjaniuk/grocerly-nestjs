@@ -13,6 +13,8 @@ import { Server, Socket } from 'socket.io';
 import { GetWsUser } from 'src/auth/decorator/getWsUser.decorator';
 import { UserFromJwtDto } from 'src/auth/dto/userFromJwtDto';
 import { AddArticleToListDto } from './dto/addArticleToListDto';
+import { UseGuards } from '@nestjs/common';
+import { WsAuthGuard } from 'src/auth/guard/ws.guard';
 
 @WebSocketGateway({
   cors: {
@@ -21,6 +23,7 @@ import { AddArticleToListDto } from './dto/addArticleToListDto';
     methods: ['GET', 'POST', 'PUT'],
   },
 })
+@UseGuards(WsAuthGuard)
 export class GroceryGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {

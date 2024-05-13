@@ -3,7 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Post,
+  Put,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -23,11 +25,16 @@ export class GroceryController {
   @Post()
   async createNewGroceryList(
     @GetUser() user: UserFromJwtDto,
-    @Body() payload: { listName: string },
+    @Body()
+    payload: {
+      listName: string;
+      articles: { name: string; categoryId: string }[];
+    },
   ) {
     return await this.groceryService.createGroceryList({
       name: payload.listName,
       userId: user.userId,
+      articles: payload.articles,
     });
   }
 
@@ -36,9 +43,27 @@ export class GroceryController {
     return await this.groceryService.getUserLists(user.userId);
   }
 
+  @Get('categories')
+  async getCategories() {
+    return await this.groceryService.getCategoriesList();
+  }
+
+  @Get(':id')
+  async getArticleById(
+    @GetUser() user: UserFromJwtDto,
+    @Param('id') id: string,
+  ) {
+    return await this.groceryService.getGroceryListById(id, user.userId);
+  }
+
   @Post('article')
   async createNewArticle(@Body() payload: AddArticleToListDto) {
     return await this.groceryService.addArticleToList(payload);
+  }
+
+  @Put('category/keywords')
+  async updateCategoryKeywords(@Body() payload: Record<string, string[]>) {
+    return await this.groceryService.updateCategoriesKeywords(payload);
   }
 
   // TODO: send link to join

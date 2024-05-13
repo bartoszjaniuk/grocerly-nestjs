@@ -8,10 +8,17 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// model Invite {
+//   id String  @id @default(cuid()) @map("_id")
+//   groceryListId:
+// }
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+
 
 model User {
   id String  @id @default(cuid()) @map("_id")
@@ -22,18 +29,38 @@ model User {
   avatar String?
   groceryLists UserGroceryList[]
   refreshToken String
+  invites Invite[] 
+
 }
+
+model Invite {
+ id String @id @default(cuid()) @map("_id")
+
+ groceryListId String
+ groceryList GroceryList @relation(fields: [groceryListId], references: [id])
+
+ userId String
+ user User @relation(fields: [userId], references: [id])
+
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+}
+
+
 
 model GroceryList {
   id String @id @default(cuid()) @map("_id")
   name String
   articles GroceryListItem[]
   users UserGroceryList[]
+  invites Invite[] 
 }
 
 model GroceryCategory {
   id String @id @default(cuid()) @map("_id")
-  name String
+  label String
+  keywords String[]
+  color String
   groceryListItems GroceryListItem[]
 }
 
@@ -41,7 +68,7 @@ model GroceryListItem {
   id String @id @default(cuid()) @map("_id")
   name String
 
-  groceryList GroceryList @relation(fields: [groceryListId], references: [id])
+  groceryList GroceryList @relation(fields: [groceryListId], references: [id], onDelete: Cascade)
   groceryListId String
 
   category GroceryCategory @relation(fields: [categoryId], references: [id])

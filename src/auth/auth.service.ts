@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import * as argon from 'argon2';
@@ -96,7 +97,7 @@ export class AuthService {
     const payload = { sub: userId, email };
 
     const access_token = await this.jwt.signAsync(payload, {
-      expiresIn: '15m',
+      expiresIn: '60m',
       secret: process.env.JWT_SECRET,
     });
 
@@ -114,5 +115,26 @@ export class AuthService {
     return await this.userService.updateUser(userId, {
       refreshToken: hashedRefreshToken,
     });
+  }
+
+  async refreshTokens(id: string, refreshToken: string) {
+    const user = await this.db.user.findUnique({ where: { id } });
+    if (!user || !user.refreshToken) {
+      console.log('Access Denied');
+      throw new ForbiddenException('Access Denied');
+    }
+
+    const refreshTokenMatches = await argon.verify(
+      user.refreshToken,
+      refreshToken,
+    );
+    if (!refreshTokenMatches) {
+      console.log('Access Denied');
+
+      throw new UnauthorizedException('Access Denied');
+    }
+    const tokens = await this.signTokens(user.id, user.email);
+    await this.updateRefreshToken(user.id, tokens.refresh_token);
+    return tokens;
   }
 }

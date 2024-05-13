@@ -6,7 +6,7 @@ import { GenerateInvitationLinkDto } from './dto/generateInvitationLinkDto';
 import { DatabaseService } from 'src/database/database.service';
 import { GetUser } from 'src/auth/decorator/getUser.decorator';
 import { UserFromJwtDto } from 'src/auth/dto/userFromJwtDto';
-import { InviteUserByEmailPayload } from './dto/InviteUserByEmailPayload';
+import { InviteUserByEmailPayload } from './dto/inviteUserByEmailPayload';
 
 @UseGuards(JwtGuard)
 @Controller('invite')

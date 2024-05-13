@@ -10,7 +10,7 @@ import {
 import { Response, Request } from 'express';
 
 import { AuthService } from './auth.service';
-import { SignUpUserDto } from './dto/SignUpUserDto';
+import { SignUpUserDto } from './dto/signUpUserDto';
 import { SignInUserDto } from './dto/signInUserDto';
 import { GetUser } from './decorator/getUser.decorator';
 import { UserFromJwtDto } from './dto/userFromJwtDto';

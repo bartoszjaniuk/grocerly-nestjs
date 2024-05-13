@@ -8,8 +8,8 @@ import { DatabaseService } from 'src/database/database.service';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { SignUpUserDto } from './dto/SignUpUserDto';
 import { SignInUserDto } from './dto/signInUserDto';
+import { SignUpUserDto } from './dto/SignUpUserDto';
 
 @Injectable()
 export class AuthService {
